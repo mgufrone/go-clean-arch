@@ -19,3 +19,4 @@ Also, I'm curious of what kind of complexity I need to face if I want to make a 
 ## TODO
 - [ ] Add more tests for repository and handler
 - [ ] Expose some entity via microservice
+- [ ] Put it in docker (docker-compose as well)
