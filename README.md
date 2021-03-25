@@ -14,3 +14,7 @@ I also want to know what kind of complexity I need to face if I want to make a m
 - App: Bare code and implementation of domains. It provides basic implementation and validation of the entity. It also connects to the defined persistence storage. It **doesn't** contain any front-facing layer (http api, grpc, etc)
 - Api: Exposing the app through Http. The responsibility is basically transforming request to app and response from app if needed. 
 - Worker: Exposing the app through background worker. Similar to Api, but only works in background app fashion. 
+
+## TODO
+- [ ] Add more tests for repository and handler
+- [ ] Expose some entity via microservice
