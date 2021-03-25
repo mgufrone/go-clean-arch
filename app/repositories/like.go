@@ -23,7 +23,7 @@ func (v *likeRepository) popular(ctx context.Context, filters ...*stats.Like) (t
 		Select("like_models.reference", "like_models.reference_id", "COUNT(user_id) as popular").
 		Group("like_models.reference").
 		Group("like_models.reference_id")
-	total = 1
+	tx.Count(&total)
 	return
 }
 func (v *likeRepository) findAll(ctx context.Context, filters ...*stats.Like) (tx *gorm.DB) {
@@ -62,18 +62,14 @@ func (v *likeRepository) GetAll(ctx context.Context, limiter *shared.CommonLimit
 	if err != nil {
 		return
 	}
-	if limiter.Offset != nil {
-		limiter.Offset.Total = uint64(total)
-	}
-	if limiter.Cursor != nil {
-		limiter.Cursor.Total = uint64(total)
-	}
+	limiter.SetTotal(uint64(total))
 	if total == 0 {
 		return
 	}
 	ltr = limiter
 	v.CommonFilter(tx, limiter)
-	var rvs []*models.LikeModel
+	caps := common.SliceMin(limiter.Total(), limiter.GetPerPage())
+	rvs := make([]*models.LikeModel, 0, caps)
 	tx.Find(&rvs)
 	for _, rv := range rvs {
 		res = append(res, rv.Transform())

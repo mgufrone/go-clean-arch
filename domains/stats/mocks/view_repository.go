@@ -11,6 +11,15 @@ type MockViewRepository struct {
 	mock.Mock
 }
 
+func (m *MockViewRepository) GroupCount(ctx context.Context, limiter *shared.CommonLimiter, filters ...*stats.View) ([]*stats.ViewWithStats, *shared.CommonLimiter, error) {
+	arg := []interface{}{ctx, limiter}
+	for _, f := range filters {
+		arg = append(arg, f)
+	}
+	args := m.Called(arg...)
+	return args.Get(0).([]*stats.ViewWithStats), args.Get(1).(*shared.CommonLimiter), args.Error(2)
+}
+
 func (m *MockViewRepository) CountByReference(ctx context.Context, reference string, id uint64) (int64, error) {
 	args := m.Called(ctx, reference, id)
 	return args.Get(0).(int64), args.Error(1)

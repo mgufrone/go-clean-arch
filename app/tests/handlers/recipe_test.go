@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"recipes/app/handlers"
 	"recipes/domains/recipe"
 	mocks2 "recipes/domains/recipe/mocks"
 	"recipes/domains/shared"
@@ -34,7 +35,7 @@ func (u *RecipeHandlerSuite) SetupSuite() {
 	u.recipe = mocks2.NewMockRecipeRepository()
 	u.view = mocks3.NewMockViewRepository()
 	u.like = mocks3.NewMockLikeRepository()
-	u.handler = NewRecipeHandler(
+	u.handler = handlers.NewRecipeHandler(
 		u.recipe,
 		u.userRepo,
 		u.like,

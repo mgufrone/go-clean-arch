@@ -81,22 +81,14 @@ func (s *sessionRepo) ListSession(ctx context.Context, limiter *shared2.CommonLi
 		return
 	}
 	ltr = limiter
-	max := uint64(0)
-	if ltr.Offset != nil {
-		ltr.Offset.Total = uint64(total)
-		max = ltr.Offset.PerPage
-	}
-	if ltr.Cursor != nil {
-		ltr.Cursor.Total = uint64(total)
-		max = ltr.Cursor.PerPage
-	}
+	ltr.SetTotal(uint64(total))
 	if total == 0 {
 		return
 	}
 	s.GormDB.CommonFilter(tx, limiter)
 	caps := uint64(total)
-	if caps > max {
-		caps = max
+	if caps > ltr.GetPerPage() {
+		caps = ltr.GetPerPage()
 	}
 	result := make([]*models.SessionModel, 0, caps)
 	tx.Find(&result)

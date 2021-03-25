@@ -141,7 +141,6 @@ func seeder(db *gorm.DB, role user.IRoleRepository, h1 user.IUserUseCase, h2 rec
 			rIdx := rand.Intn(len(rcps) - 1)
 			r := rcps[rIdx]
 			usr := usrs[randUser]
-			fmt.Println("is liking", act)
 			if act == 1 {
 				if err := h2.Like(ctx, usr, r); err != nil {
 					log.Println("like action failed", err)

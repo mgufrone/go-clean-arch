@@ -41,7 +41,7 @@ func (v *viewRepository) popular(ctx context.Context, filters ...*stats.View) (t
 		Select("view_models.reference", "view_models.reference_id", "COUNT(user_id) as view_count").
 		Group("view_models.reference").
 		Group("view_models.reference_id")
-	total = 1
+	tx.Debug().Count(&total)
 	return
 }
 func (v *viewRepository) findAll(ctx context.Context, filters ...*stats.View) (tx *gorm.DB) {

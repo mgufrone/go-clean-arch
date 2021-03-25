@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"recipes/api/constants"
@@ -60,7 +59,7 @@ func (a *AuthController) generateToken(sess *user.Session) (token string, refres
 	claims := jwt.StandardClaims{
 		Audience:  usrID,
 		ExpiresAt: sess.ExpiresAt.Unix(),
-		Id:        fmt.Sprintf("%v", sess.ID),
+		Id:        sess.SessionID,
 		IssuedAt:  sess.UpdatedAt.Unix(),
 		Issuer:    a.cfg.AppName,
 	}

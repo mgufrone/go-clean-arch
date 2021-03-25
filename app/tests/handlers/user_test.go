@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"recipes/app/config"
+	"recipes/app/handlers"
 	"recipes/app/tests/externals"
 	"recipes/domains/shared"
 	"recipes/domains/user"
@@ -34,7 +35,7 @@ func (u *UserHandlerSuite) SetupSuite() {
 	u.roleRepo = mocks.NewMockRoleRepository()
 	u.sessRepo = mocks.NewMockSessionRepository()
 	u.fb = externals.NewMockFirebaseAuth()
-	u.handler = NewUserHandler(
+	u.handler = handlers.NewUserHandler(
 		u.userRepo,
 		u.roleRepo,
 		u.sessRepo,

@@ -75,25 +75,28 @@ func (r *recipeRepo) findAll(ctx context.Context, filters ...*recipe.Recipe) *go
 }
 
 func (r *recipeRepo) GetAll(ctx context.Context, limiter *shared.CommonLimiter, filters ...*recipe.Recipe) (res []*recipe.Recipe, ltr *shared.CommonLimiter, err error) {
-	var rcps []*models.RecipeModel
 	tx, total, err := r.count(ctx, filters...)
 	if err != nil {
 		return
 	}
-	if limiter.Offset != nil {
-		limiter.Offset.Total = uint64(total)
-	}
-	if limiter.Cursor != nil {
-		limiter.Cursor.Total = uint64(total)
-	}
+	limiter.SetTotal(uint64(total))
 	ltr = limiter
 	if total == 0 {
 		return
 	}
 	r.GormDB.CommonFilter(tx, limiter)
+	caps := limiter.Total()
+	if caps > limiter.GetPerPage() {
+		caps = limiter.GetPerPage()
+	}
+	rps := make([]*models.RecipeModel, 0, caps)
 	result := tx.Preload("Ingredients", func(db *gorm.DB) *gorm.DB {
 		return db.Order("ingredient_models.sequence asc")
-	}).Preload("Photos").Preload("Steps").Find(&rcps)
+	}).Preload("Photos", func(db *gorm.DB) *gorm.DB {
+		return db.Order("photo_models.sequence asc")
+	}).Preload("Steps", func(db *gorm.DB) *gorm.DB {
+		return db.Order("step_models.sequence asc")
+	}).Find(&rps)
 	err = result.Error
 	if err != nil {
 		return
@@ -101,7 +104,7 @@ func (r *recipeRepo) GetAll(ctx context.Context, limiter *shared.CommonLimiter, 
 	if total == 0 {
 		return
 	}
-	for _, rcp := range rcps {
+	for _, rcp := range rps {
 		res = append(res, rcp.Transform())
 	}
 	return
@@ -119,13 +122,11 @@ func (r *recipeRepo) Create(ctx context.Context, rcpRes *recipe.Recipe) (err err
 
 func (r *recipeRepo) Update(ctx context.Context, resRcp *recipe.Recipe) (err error) {
 	rcp := models.ParseRecipe(resRcp)
-	tx := r.DB.WithContext(ctx).Session(&gorm.Session{
-		FullSaveAssociations: false,
-	}).Model(&models.RecipeModel{})
-	cur := tx.Where("id = ?", rcp.ID)
+	tx := r.DB.WithContext(ctx).Model(&models.RecipeModel{})
 	tx.Model(&models.IngredientModel{}).Unscoped().Delete("recipe_id = ?", rcp.ID)
 	tx.Model(&models.PhotoModel{}).Unscoped().Delete("recipe_id = ?", rcp.ID)
 	tx.Model(&models.StepModel{}).Unscoped().Delete("recipe_id = ?", rcp.ID)
+	cur := tx.Where("id = ?", rcp.ID)
 	res := cur.Updates(rcp)
 	if res.Error != nil {
 		err = res.Error

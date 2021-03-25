@@ -39,7 +39,7 @@ func (r *RecipeController) Popular(ctx *gin.Context) {
 	if err != nil {
 		http.ServerError(ctx, err)
 	}
-	http.OkWithTotal(ctx, res, uint(l.Offset.Total))
+	http.OkWithTotal(ctx, res, uint(l.Total()))
 }
 
 func (r *RecipeController) Create(ctx *gin.Context) {

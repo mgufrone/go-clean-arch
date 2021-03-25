@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"errors"
-	"fmt"
 	"recipes/app/common"
 	"recipes/app/models"
 	"recipes/domains/recipe"
@@ -239,7 +238,6 @@ func (r *recipeHandler) Popular(ctx context.Context, usr *user.User, limiter *sh
 	if l.Total() == 0 {
 		return nil, l, err
 	}
-	fmt.Println(len(views), cp2.GetPerPage(), limiter.GetPerPage())
 	if len(views) > 0 {
 		var wg sync.WaitGroup
 		for _, v1 := range views {
