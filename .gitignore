@@ -1,0 +1,6 @@
+vendor
+.idea
+.env
+*.json
+*coverage*
+docs/
