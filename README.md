@@ -7,7 +7,8 @@ Feedback are most welcome.
 
 While I do not have any intention to make a framework from this and as it is a very opinionated structure, this would be useful for me to as starting point of a project, 
 but if you find this structure useful to you and you have some improvement in mind, just let me know by opening issues.
-I also want to know what kind of complexity I need to face if I want to make a monolithic code for microservices.
+
+Also, I'm curious of what kind of complexity I need to face if I want to make a monolithic code for microservices.
 
 ## What's inside
 - Domains: contains repository and use case interfaces as well as base entity.
